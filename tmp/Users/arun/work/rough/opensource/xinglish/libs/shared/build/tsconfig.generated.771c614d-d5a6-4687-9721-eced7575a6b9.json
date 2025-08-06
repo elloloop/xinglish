@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@xinglish/angular": [
+        "libs/angular/src/index.ts"
+      ],
+      "@xinglish/core": [
+        "libs/core/src/index.ts"
+      ],
+      "@xinglish/react": [
+        "libs/react/src/index.ts"
+      ],
+      "@xinglish/shared": [
+        "libs/shared/src/index.ts"
+      ]
+    }
+  },
+  "extends": "../../../../../../../../../../libs/shared/tsconfig.lib.json"
+}
