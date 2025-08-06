@@ -1,7 +1,41 @@
 {
-  "name": "@xinglish/shared",
+  "name": "@elloloop/xinglish-shared",
   "version": "0.0.1",
+  "description": "Shared types and utilities for Xinglish transliteration toolkit",
   "main": "./index.cjs",
   "module": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./index.cjs",
+      "types": "./index.d.ts"
+    }
+  },
+  "files": [
+    "index.js",
+    "index.cjs",
+    "index.d.ts"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elloloop/xinglish.git",
+    "directory": "libs/shared"
+  },
+  "keywords": [
+    "transliteration",
+    "types",
+    "utilities",
+    "indian-languages"
+  ],
+  "author": "Xinglish Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/elloloop/xinglish/issues"
+  },
+  "homepage": "https://github.com/elloloop/xinglish#readme",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "dependencies": {}
 }

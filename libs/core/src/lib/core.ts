@@ -6,7 +6,7 @@ import {
   TransliterationResult,
   TransliterationSuggestion,
   getLanguageConfig,
-} from '@xinglish/shared';
+} from '@elloloop/xinglish-shared';
 
 /**
  * Core transliteration engine

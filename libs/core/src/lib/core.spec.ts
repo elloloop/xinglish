@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { TransliterationEngine } from './core';
-import { SupportedLanguage } from '@xinglish/shared';
+import { SupportedLanguage } from '@elloloop/xinglish-shared';
 
 describe('TransliterationEngine', () => {
   let engine: TransliterationEngine;

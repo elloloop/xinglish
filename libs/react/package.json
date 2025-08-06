@@ -1,4 +1,48 @@
 {
-  "name": "@xinglish/react",
-  "version": "0.0.1"
+  "name": "@elloloop/xinglish-react",
+  "version": "0.0.1",
+  "description": "React components for Xinglish transliteration toolkit",
+  "main": "./index.cjs",
+  "module": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./index.cjs",
+      "types": "./index.d.ts"
+    }
+  },
+  "files": [
+    "index.js",
+    "index.cjs",
+    "index.d.ts"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elloloop/xinglish.git",
+    "directory": "libs/react"
+  },
+  "keywords": [
+    "react",
+    "transliteration",
+    "indian-languages",
+    "components"
+  ],
+  "author": "Xinglish Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/elloloop/xinglish/issues"
+  },
+  "homepage": "https://github.com/elloloop/xinglish#readme",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "dependencies": {
+    "@elloloop/xinglish-core": "workspace:*",
+    "@elloloop/xinglish-shared": "workspace:*"
+  }
 }

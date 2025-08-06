@@ -15,10 +15,10 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@xinglish/angular": ["libs/angular/src/index.ts"],
-      "@xinglish/core": ["libs/core/src/index.ts"],
-      "@xinglish/react": ["libs/react/src/index.ts"],
-      "@xinglish/shared": ["libs/shared/src/index.ts"]
+      "@elloloop/xinglish-angular": ["libs/angular/src/index.ts"],
+      "@elloloop/xinglish-core": ["libs/core/src/index.ts"],
+      "@elloloop/xinglish-react": ["libs/react/src/index.ts"],
+      "@elloloop/xinglish-shared": ["libs/shared/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

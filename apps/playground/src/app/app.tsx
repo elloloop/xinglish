@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { TransliterationEditorComponent, useTransliteration } from '@xinglish/react';
-import { SupportedLanguage, EditorLayout, TransliterationResult } from '@xinglish/shared';
+import { TransliterationEditorComponent, useTransliteration } from '@elloloop/xinglish-react';
+import { SupportedLanguage, EditorLayout, TransliterationResult } from '@elloloop/xinglish-shared';
 import './app.module.css';
 
 export function App() {

@@ -3,8 +3,8 @@ import {
   EditorConfig,
   SupportedLanguage,
   TransliterationResult,
-} from '@xinglish/shared';
-import { TransliterationEditor } from '@xinglish/core';
+} from '@elloloop/xinglish-shared';
+import { TransliterationEditor } from '@elloloop/xinglish-core';
 
 export interface TransliterationEditorProps extends Omit<EditorConfig, 'onChange'> {
   /** Callback when transliteration result changes */

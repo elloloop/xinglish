@@ -3,7 +3,7 @@ import {
   EditorLayout,
   SupportedLanguage,
   TransliterationResult,
-} from '@xinglish/shared';
+} from '@elloloop/xinglish-shared';
 import { TransliterationEngine } from './core';
 
 /**

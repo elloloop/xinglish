@@ -1,0 +1,44 @@
+name: Build and Publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@elloloop'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build packages
+        run: |
+          npx nx build core
+          npx nx build shared
+          npx nx build react
+          npx nx build angular
+          
+      - name: Publish to GitHub Packages
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
+          echo "@elloloop:registry=https://npm.pkg.github.com" >> ~/.npmrc
+          
+          cd dist/libs/shared && npm publish
+          cd ../../core && npm publish
+          cd ../react && npm publish
+          cd ../angular && npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }} 

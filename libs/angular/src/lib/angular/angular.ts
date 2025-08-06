@@ -14,8 +14,8 @@ import {
   EditorConfig,
   SupportedLanguage,
   TransliterationResult,
-} from '@xinglish/shared';
-import { TransliterationEditor } from '@xinglish/core';
+} from '@elloloop/xinglish-shared';
+import { TransliterationEditor } from '@elloloop/xinglish-core';
 
 @Component({
   selector: 'xinglish-editor',

@@ -1,7 +1,44 @@
 {
-  "name": "@xinglish/core",
+  "name": "@elloloop/xinglish-core",
   "version": "0.0.1",
+  "description": "Core transliteration engine for Indian languages",
   "main": "./index.cjs",
   "module": "./index.js",
-  "dependencies": {}
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./index.cjs",
+      "types": "./index.d.ts"
+    }
+  },
+  "files": [
+    "index.js",
+    "index.cjs",
+    "index.d.ts"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elloloop/xinglish.git",
+    "directory": "libs/core"
+  },
+  "keywords": [
+    "transliteration",
+    "indian-languages",
+    "hindi",
+    "devanagari",
+    "phonetic"
+  ],
+  "author": "Xinglish Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/elloloop/xinglish/issues"
+  },
+  "homepage": "https://github.com/elloloop/xinglish#readme",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "dependencies": {
+    "@elloloop/xinglish-shared": "workspace:*"
+  }
 }
