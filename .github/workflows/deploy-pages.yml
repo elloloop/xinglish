@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, cursor/setup-all-deployment-pipelines-482c ]
     paths:
       - 'apps/playground/**'
       - 'libs/**'

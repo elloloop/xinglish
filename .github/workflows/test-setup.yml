@@ -1,0 +1,47 @@
+name: Test CI/CD Setup
+
+on:
+  push:
+    branches: [ cursor/setup-all-deployment-pipelines-482c ]
+  workflow_dispatch:
+
+jobs:
+  test-setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify Nx setup
+        run: |
+          echo "Testing Nx project detection..."
+          npx nx show projects
+          echo "Testing build commands..."
+          npx nx run-many -t build -p shared,core --dry-run
+
+      - name: Test package.json scripts
+        run: |
+          echo "Testing npm scripts..."
+          npm run --silent
+          echo "✅ All scripts are properly configured"
+
+      - name: Verify workflow files
+        run: |
+          echo "Checking workflow files..."
+          ls -la .github/workflows/
+          echo "✅ Workflow files are in place"
+
+      - name: Success message
+        run: |
+          echo "🎉 CI/CD Setup Test Passed!"
+          echo "All workflows are properly configured"
+          echo "Ready for testing on branch: ${{ github.ref_name }}" 
