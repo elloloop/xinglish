@@ -2,7 +2,7 @@ name: Build and Publish
 
 on:
   push:
-    branches: [cursor/setup-all-deployment-pipelines-482c]
+    branches: [main]
     tags:
       - 'v*'
   workflow_dispatch:

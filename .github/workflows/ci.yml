@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main, develop, cursor/setup-all-deployment-pipelines-482c]
+    branches: [main]
   pull_request:
-    branches: [main, develop, cursor/setup-all-deployment-pipelines-482c]
+    branches: [main]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
