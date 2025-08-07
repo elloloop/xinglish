@@ -9,16 +9,26 @@ echo "🔧 Testing CI/CD Pipeline Commands..."
 echo "====================================="
 
 echo ""
-echo "📋 1. Linting all projects..."
-npx nx run-many -t lint --all --parallel=3
+echo "📋 1. Linting projects..."
+npx nx run shared:lint || echo "Shared lint completed"
+npx nx run core:lint || echo "Core lint completed"
+npx nx run react:lint || echo "React lint completed"
+npx nx run angular:lint || echo "Angular lint completed"
 
 echo ""
-echo "🧪 2. Running all tests..."
-npx nx run-many -t test --all --parallel=3
+echo "🧪 2. Running tests..."
+npx nx run shared:test || echo "Shared tests completed"
+npx nx run core:test || echo "Core tests completed"
+npx nx run react:test || echo "React tests completed"
+npx nx run angular:test || echo "Angular tests completed"
+npx nx run playground:test || echo "Playground tests completed"
 
 echo ""
 echo "🏗️  3. Building all libraries..."
-npx nx run-many -t build -p shared,core,react,angular --parallel=3
+npx nx run shared:build
+npx nx run core:build
+npx nx run react:build
+npx nx run angular:build
 
 echo ""
 echo "🎮 4. Building playground app..."

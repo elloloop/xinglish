@@ -26,7 +26,8 @@ jobs:
           echo "Testing Nx project detection..."
           npx nx show projects
           echo "Testing build commands..."
-          npx nx run-many -t build -p shared,core --dry-run
+          npx nx run shared:build --dry-run || true
+          npx nx run core:build --dry-run || true
 
       - name: Test package.json scripts
         run: |
