@@ -1,142 +1,133 @@
-# Xinglish – Phonetic Transliteration Toolkit for Indian Languages
+# Xinglish
 
-🚀 **Xinglish** is a monorepo-based phonetic transliteration framework that allows users to type Indian languages using English letters (like Hinglish, Tinglish, Tanglish) and renders the native script in real time. It is designed to support multiple Indian scripts and offers UI components for React, Angular, and vanilla web use.
+Phonetic transliteration toolkit for Indian languages
 
-## 🧩 Key Features
+[![CI](https://github.com/elloloop/xinglish/workflows/CI/badge.svg)](https://github.com/elloloop/xinglish/actions/workflows/ci.yml)
+[![Deploy to GitHub Pages](https://github.com/elloloop/xinglish/workflows/Deploy%20to%20GitHub%20Pages/badge.svg)](https://github.com/elloloop/xinglish/actions/workflows/deploy-pages.yml)
+[![npm version](https://img.shields.io/npm/v/@elloloop/xinglish-core?label=core)](https://www.npmjs.com/package/@elloloop/xinglish-core)
+[![npm version](https://img.shields.io/npm/v/@elloloop/xinglish-react?label=react)](https://www.npmjs.com/package/@elloloop/xinglish-react)
+[![npm version](https://img.shields.io/npm/v/@elloloop/xinglish-angular?label=angular)](https://www.npmjs.com/package/@elloloop/xinglish-angular)
 
-### Transliteration Engine
-
-- Core engine that maps English-typed phonetic syllables to Indian script characters
-- Rule-based system using configurable mapping tables per language
-- Longest-match tokenization for accurate transliteration
-- Support for major Indian languages: Hindi, Telugu, Tamil, Kannada, Malayalam, Bengali, Marathi, Gujarati, and more
-
-### Editor UI Components
-
-Framework-agnostic text editor with configurable layout modes:
-
-- **Side-by-side input/output** - Input and output displayed side by side
-- **Stacked input/output** - Output displayed below input
-- **Output-only mode** - Real-time transliteration display
-- Built in vanilla JS/TS, with wrappers for React and Angular
-
-### Multi-Language Support
-
-Each language has its own phonetic-to-script mapping configuration, making it easy to add new languages.
-
-## 🏗️ Nx Monorepo Structure
-
-```
-apps/
-  playground/              → Demo app to test the editor (uses React)
-libs/
-  core/                    → Transliteration engine (framework-agnostic)
-  react/                   → React wrapper for the editor
-  angular/                 → Angular wrapper
-  shared/                  → Shared utilities (mappings, test data, types)
-```
-
-Each library will be published as `@xinglish/<package-name>` on npm.
-
-## 🧠 Engine Design
-
-The transliteration engine uses:
-
-- **Longest-match tokenization** of Latin input
-- **Unicode character mapping** for target scripts
-- **Language-specific configuration files** for easy extension
-- **Dictionary-based fallback** for better ambiguity handling (planned)
-- **Suggestion engine** for alternate transliterations (planned)
-
-## ⚙️ Tech Stack
-
-- **Monorepo Tooling**: Nx (TypeScript-first)
-- **UI Layers**: Vanilla JS, React, Angular
-- **Build Tooling**: Nx + Rollup for library packages
-- **Playground**: Vite + React for live testing
-- **Testing**: Vitest
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Node.js 18+
-- npm
+## 🚀 Quick Start
 
 ### Installation
 
 ```bash
+# Core library
+npm install @elloloop/xinglish-core
+
+# React components
+npm install @elloloop/xinglish-react
+
+# Angular components
+npm install @elloloop/xinglish-angular
+```
+
+### Basic Usage
+
+```typescript
+import { TransliterationEngine } from '@elloloop/xinglish-core';
+
+const engine = new TransliterationEngine('hindi');
+const result = engine.transliterate('namaste');
+console.log(result.transliterated); // नमस्ते
+```
+
+## 🎮 Playground
+
+Try out the transliteration features in our interactive playground:
+**[Live Demo](https://elloloop.github.io/xinglish/)**
+
+## 📦 Packages
+
+| Package | Description | NPM |
+|---------|-------------|-----|
+| `@elloloop/xinglish-shared` | Shared types and utilities | [![npm](https://img.shields.io/npm/v/@elloloop/xinglish-shared)](https://www.npmjs.com/package/@elloloop/xinglish-shared) |
+| `@elloloop/xinglish-core` | Core transliteration engine | [![npm](https://img.shields.io/npm/v/@elloloop/xinglish-core)](https://www.npmjs.com/package/@elloloop/xinglish-core) |
+| `@elloloop/xinglish-react` | React components | [![npm](https://img.shields.io/npm/v/@elloloop/xinglish-react)](https://www.npmjs.com/package/@elloloop/xinglish-react) |
+| `@elloloop/xinglish-angular` | Angular components | [![npm](https://img.shields.io/npm/v/@elloloop/xinglish-angular)](https://www.npmjs.com/package/@elloloop/xinglish-angular) |
+
+## 🛠️ Development
+
+### Prerequisites
+
+- Node.js 20+ (see [.nvmrc](.nvmrc))
+- npm or yarn
+
+### Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/elloloop/xinglish.git
+cd xinglish
+
+# Install dependencies
 npm install
+
+# Start development server
+npm run dev:playground
 ```
 
-### Development
+### Available Scripts
 
 ```bash
-# Start the playground app
-nx serve playground
-
-# Build all libraries
-nx build core
-nx build shared
-nx build react
-nx build angular
-
-# Run tests
-nx test core
-nx test shared
-nx test react
-nx test angular
+npm run test          # Run all tests
+npm run test-ci       # Run CI/CD test suite
+npm run lint          # Lint all projects
+npm run build         # Build all projects
+npm run build:libs    # Build only libraries
 ```
 
-### Building for Production
+### Project Structure
 
-```bash
-# Build all packages
-nx run-many --target=build --all
-
-# Build specific package
-nx build core
+```
+xinglish/
+├── apps/
+│   └── playground/          # Interactive demo app
+├── libs/
+│   ├── shared/             # Shared types and utilities
+│   ├── core/               # Core transliteration engine
+│   ├── react/              # React components
+│   └── angular/            # Angular components
+├── .github/
+│   └── workflows/          # CI/CD pipelines
+└── scripts/
+    └── test-ci.sh          # CI/CD test script
 ```
 
-## 📦 Package Publishing
+## 🌐 Supported Languages
 
-Each library can be published independently:
+Currently supported:
+- **Hindi** (Devanagari script)
 
-```bash
-# Publish core engine
-nx publish core
-
-# Publish React wrapper
-nx publish react
-
-# Publish Angular wrapper
-nx publish angular
-
-# Publish shared utilities
-nx publish shared
-```
+Planned support:
+- Telugu
+- Tamil
+- Kannada
+- Malayalam
+- Bengali
+- Marathi
+- Gujarati
 
 ## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+### Development Workflow
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Add tests for new functionality
-5. Run the test suite
-6. Submit a pull request
+4. Run tests: `npm run test-ci`
+5. Submit a pull request
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🗺️ Roadmap
+## 🔗 Links
 
-- [ ] Core transliteration engine with Hindi support
-- [ ] React editor component
-- [ ] Angular editor component
-- [ ] Vanilla JS editor component
-- [ ] Additional language support (Telugu, Tamil, etc.)
-- [ ] Dictionary-based fallback system
-- [ ] Suggestion engine
-- [ ] Performance optimizations
-- [ ] Documentation and examples
+- [Documentation](https://elloloop.github.io/xinglish/)
+- [Issues](https://github.com/elloloop/xinglish/issues)
+- [Discussions](https://github.com/elloloop/xinglish/discussions)
+- [CI/CD Setup](CI_CD_SETUP.md)
