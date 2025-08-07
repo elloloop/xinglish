@@ -1,0 +1,6 @@
+{
+  "source": {
+    "type": "gh_actions"
+  },
+  "build_type": "workflow"
+}

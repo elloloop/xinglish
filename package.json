@@ -4,7 +4,12 @@
   "description": "Phonetic transliteration toolkit for Indian languages",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nx run-many -t test --all",
+    "test-ci": "./scripts/test-ci.sh",
+    "lint": "nx run-many -t lint --all",
+    "build": "nx run-many -t build --all",
+    "build:libs": "nx run-many -t build -p shared,core,react,angular",
+    "dev:playground": "nx serve playground"
   },
   "repository": {
     "type": "git",
