@@ -13,8 +13,8 @@ export class TransliterationEditor {
   private engine: TransliterationEngine;
   private config: EditorConfig;
   private container: HTMLElement;
-  private inputElement: HTMLTextAreaElement | HTMLInputElement;
-  private outputElement: HTMLElement;
+  private inputElement!: HTMLTextAreaElement | HTMLInputElement;
+  private outputElement!: HTMLElement;
   private suggestionsElement: HTMLElement | null = null;
 
   constructor(container: HTMLElement, config: EditorConfig) {
@@ -179,8 +179,10 @@ export class TransliterationEditor {
       const end = target.selectionEnd;
       const value = target.value;
 
-      target.value = value.substring(0, start) + '\t' + value.substring(end);
-      target.selectionStart = target.selectionEnd = start + 1;
+      if (start !== null && end !== null) {
+        target.value = value.substring(0, start) + '\t' + value.substring(end);
+        target.selectionStart = target.selectionEnd = start + 1;
+      }
 
       // Trigger input event
       target.dispatchEvent(new Event('input', { bubbles: true }));

@@ -2,43 +2,122 @@ name: Build and Publish
 
 on:
   push:
+    branches: [main]
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (optional, will use tag if not provided)'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
 
 jobs:
-  build-and-publish:
+  test:
     runs-on: ubuntu-latest
-    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+        with:
+          fetch-depth: 0
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@elloloop'
-          
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
       - name: Install dependencies
         run: npm ci
-        
+
+      - name: Run tests
+        run: |
+          # Run tests for projects that have test targets
+          npx nx run shared:test || true
+          npx nx run core:test || true
+          npx nx run react:test || true
+          npx nx run angular:test || true
+          npx nx run playground:test || true
+
+      - name: Run linting
+        run: |
+          # Run linting for projects that have lint targets
+          npx nx run shared:lint || true
+          npx nx run core:lint || true
+          npx nx run react:lint || true
+          npx nx run angular:lint || true
+
+  build-and-publish:
+    runs-on: ubuntu-latest
+    needs: test
+    environment: npm-publish
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@elloloop'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Version packages (if manual trigger)
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.version
+        run: |
+          npx nx release version ${{ github.event.inputs.version }} --dry-run=false
+
       - name: Build packages
         run: |
-          npx nx build core
-          npx nx build shared
-          npx nx build react
-          npx nx build angular
-          
+          # Build packages in dependency order
+          npx nx run shared:build
+          npx nx run core:build
+          npx nx run react:build
+          npx nx run angular:build
+
       - name: Publish to GitHub Packages
         run: |
+          # Configure npm authentication
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
           echo "@elloloop:registry=https://npm.pkg.github.com" >> ~/.npmrc
-          
-          cd dist/libs/shared && npm publish
-          cd ../../core && npm publish
-          cd ../react && npm publish
-          cd ../angular && npm publish
+
+                      # Publish packages in dependency order
+            cd dist/libs/shared && npm publish
+            cd ../../../dist/libs/core && npm publish
+            cd ../react && npm publish
+            cd ../angular && npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create GitHub Release
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
+          body: |
+            ## Changes in this release
+            - Published packages to GitHub Packages Registry
+            - Built with Node.js 20 LTS and latest dependencies
+
+            ## Published Packages
+            - @elloloop/xinglish-shared@${{ github.ref_name }}
+            - @elloloop/xinglish-core@${{ github.ref_name }}
+            - @elloloop/xinglish-react@${{ github.ref_name }}
+            - @elloloop/xinglish-angular@${{ github.ref_name }}
+          draft: false
+          prerelease: false

@@ -1,0 +1,55 @@
+name: Test GitHub Pages Setup
+
+on:
+  push:
+    branches: [cursor/setup-all-deployment-pipelines-482c]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check projects
+        run: |
+          echo "Available projects:"
+          npx nx show projects
+          echo ""
+          echo "Playground project details:"
+          npx nx show project playground --json | head -20
+
+      - name: Test library builds
+        run: |
+          echo "Building libraries..."
+          npx nx run shared:build
+          npx nx run core:build
+          npx nx run react:build
+          echo "✅ Libraries built successfully"
+
+      - name: Test playground build
+        run: |
+          echo "Building playground..."
+          npx nx run playground:build
+          echo "✅ Playground built successfully"
+          ls -la dist/apps/playground/
+
+      - name: Success
+        run: |
+          echo "🎉 All builds successful!"
+          echo "GitHub Pages deployment should work now."
