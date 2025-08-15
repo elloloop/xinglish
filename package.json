@@ -46,7 +46,7 @@
     "@nx/web": "21.3.11",
     "@nx/workspace": "^21.3.11",
     "@rollup/plugin-url": "^8.0.2",
-    "@schematics/angular": "~20.1.0",
+    "@schematics/angular": "~20.1.6",
     "@svgr/rollup": "^8.1.0",
     "@swc-node/register": "~1.9.1",
     "@swc/cli": "~0.6.0",
