@@ -1,0 +1,109 @@
+# Issue #1: Transliteration Algorithm Overhaul
+
+## Issue Information
+
+- **Issue Number**: #1
+- **Title**: Transliteration Algorithm Overhaul
+- **Status**: 🔴 NOT STARTED
+- **Priority**: 🔴 CRITICAL
+- **Assignee**: [TBD]
+- **Created**: 2024-12-19
+- **Target Completion**: 2024-12-26
+
+## Status Tracking
+
+- [x] 🔴 NOT STARTED
+- [x] 🟡 IN PROGRESS
+- [ ] 🟢 REVIEW NEEDED
+- [ ] ✅ COMPLETED
+- [ ] ❌ BLOCKED
+
+## Problem
+
+The current transliteration algorithm produces poor quality results:
+
+- **Input**: "namaste"
+- **Current Output**: "नअमअसतए" (letter-by-letter transliteration)
+- **Expected Output**: "नमस्ते" (proper Hindi word)
+
+## Root Cause Analysis
+
+The current algorithm has several fundamental flaws:
+
+1. **Character-by-character processing**: It transliterates each letter individually without understanding Hindi phonetics
+2. **No syllable awareness**: Hindi is a syllabic language, but the algorithm doesn't recognize syllable boundaries
+3. **Missing phonetic rules**: Many important Hindi phonetic patterns are not implemented
+4. **No context awareness**: The algorithm doesn't consider surrounding characters or word context
+5. **Incorrect vowel handling**: Hindi has inherent vowels and vowel signs (matras), but the current approach treats all vowels the same
+
+## Current Algorithm Flow
+
+```
+"namaste" → split into characters → [n, a, m, a, s, t, e]
+→ transliterate each: n→न, a→अ, m→म, a→अ, s→स, t→त, e→ए
+→ result: "नअमअसतए"
+```
+
+## Required Algorithm Flow
+
+```
+"namaste" → analyze syllables → [na, ma, ste]
+→ apply phonetic rules: na→न, ma→म, ste→स्ते
+→ result: "नमस्ते"
+```
+
+## Impact
+
+- **High Priority**: This is the core functionality and current results are unusable
+- **User Experience**: Users cannot rely on the transliteration for actual communication
+- **Credibility**: Poor quality undermines the entire project's value proposition
+
+## Dependencies
+
+- None (this is the foundational issue)
+
+## Estimated Effort
+
+- **Development**: 3-4 days
+- **Testing**: 1-2 days
+- **Total**: 5-6 days
+
+## Acceptance Criteria
+
+- [ ] "namaste" correctly transliterates to "नमस्ते"
+- [ ] "kaise ho aap" correctly transliterates to "कैसे हो आप"
+- [ ] All test cases in `test-core.js` pass with correct Hindi output
+- [ ] Confidence scores accurately reflect transliteration quality
+- [ ] Performance remains under 100ms for typical word lengths
+
+## Testing
+
+- [ ] Unit tests written and passing
+- [ ] Integration tests passing
+- [ ] Manual testing completed
+- [ ] Performance benchmarks met
+
+## Documentation
+
+- [ ] Code comments added
+- [ ] README updated if needed
+- [ ] API documentation updated
+
+## Completion Checklist
+
+- [ ] All acceptance criteria met
+- [ ] All tests passing
+- [ ] Code reviewed
+- [ ] Documentation updated
+- [ ] Issue status updated to ✅ COMPLETED
+- [ ] Linked to dependent issues (#2, #4)
+
+## Notes
+
+This is the foundational issue that must be completed before any other issues can proceed.
+
+---
+
+**Status History**:
+
+- 2024-12-19 🔴 NOT STARTED - Issue created
