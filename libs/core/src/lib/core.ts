@@ -165,6 +165,13 @@ export class TransliterationEngine {
       const match = text.slice(startPos).match(pattern);
 
       if (match) {
+        if (rule.wordBoundary) {
+          // Check if we are at the end of the word (or followed only by non-alphanumerics)
+          const remainingText = text.slice(startPos + rule.pattern.length);
+          if (remainingText && /^[a-zA-Z0-9]/.test(remainingText)) {
+            continue; // Not a word boundary
+          }
+        }
         return rule;
       }
     }

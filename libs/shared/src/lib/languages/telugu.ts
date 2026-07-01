@@ -60,6 +60,7 @@ export const teluguConfig: LanguageConfig = {
     { pattern: 'f', target: 'ఫ', type: 'consonant', priority: 1 },
     { pattern: 'b', target: 'బ', type: 'consonant', priority: 1 },
     { pattern: 'bh', target: 'భ', type: 'consonant', priority: 2 },
+    { pattern: 'm', target: 'ం', type: 'special', priority: 5, wordBoundary: true },
     { pattern: 'm', target: 'మ', type: 'consonant', priority: 1 },
     { pattern: 'y', target: 'య', type: 'consonant', priority: 1 },
     { pattern: 'r', target: 'ర', type: 'consonant', priority: 1 },

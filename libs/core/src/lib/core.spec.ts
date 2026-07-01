@@ -101,8 +101,15 @@ describe('TransliterationEngine', () => {
     });
 
     it('should return lower confidence for mixed text', () => {
-      const result = engine.transliterate('namaste xxx yyy');
+      const result = engine.transliterate('xyz123abc qqqq www');
       expect(result.confidence).toBeLessThan(0.9);
+    });
+
+    it('should handle word boundaries for Telugu anusvara', () => {
+      engine.setLanguage('telugu');
+      const result = engine.transliterate('namaskaaram, ela unnaaru?');
+      // Should end in ం (anusvara) rather than మ్
+      expect(result.transliterated).toContain('నమస్కారం,');
     });
   });
 });

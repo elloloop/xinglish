@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@elloloop/xinglish-angular": [
+        "libs/angular/src/index.ts"
+      ],
+      "@elloloop/xinglish-core": [
+        "dist/libs/core"
+      ],
+      "@elloloop/xinglish-react": [
+        "libs/react/src/index.ts"
+      ],
+      "@elloloop/xinglish-shared": [
+        "dist/libs/shared"
+      ]
+    }
+  },
+  "extends": "../../../../libs/angular/tsconfig.lib.prod.json"
+}
