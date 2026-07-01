@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Xinglish Transliteration",
+  "version": "1.0.0",
+  "description": "Transliterate Latin text to Indian languages anywhere on the web.",
+  "action": {
+    "default_popup": "index.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "permissions": ["storage", "activeTab"]
+}
