@@ -55,6 +55,8 @@ export interface LanguageConfig {
     start: number;
     end: number;
   };
+  /** Custom word dictionary */
+  dictionary?: Record<string, string>;
 }
 
 /**

@@ -1,3 +1,7 @@
+/**
+ * @vitest-environment jsdom
+ */
+import { describe, it, expect, beforeEach } from 'vitest';
 import { AppElement } from './app.element';
 
 describe('AppElement', () => {

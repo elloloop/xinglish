@@ -1,4 +1,8 @@
 import { LanguageConfig } from '../shared';
+import { hindiDictionary } from './hindi/dictionary';
+import { hindiVowels } from './hindi/vowels';
+import { hindiConsonants } from './hindi/consonants';
+import { hindiSpecial } from './hindi/special';
 
 /**
  * Hindi language configuration with Devanagari script
@@ -9,6 +13,8 @@ export const hindiConfig: LanguageConfig = {
   scriptName: 'Devanagari',
   virama: '्',
   retainWordFinalVirama: false,
+  dictionary: hindiDictionary,
+  rules: [...hindiVowels, ...hindiConsonants, ...hindiSpecial],
   unicodeRange: {
     start: 0x0900,
     end: 0x097f,

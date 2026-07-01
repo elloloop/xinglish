@@ -1,0 +1,25 @@
+import { TransliterationRule } from '../../shared';
+
+export const teluguVowels: TransliterationRule[] = [
+  { pattern: 'a', target: 'అ', alternateTarget: '', type: 'vowel', priority: 1 },
+  { pattern: 'aa', target: 'ఆ', alternateTarget: 'ా', type: 'vowel', priority: 2 },
+  { pattern: 'A', target: 'ఆ', alternateTarget: 'ా', type: 'vowel', priority: 2 },
+  { pattern: 'i', target: 'ఇ', alternateTarget: 'ి', type: 'vowel', priority: 1 },
+  { pattern: 'ee', target: 'ఈ', alternateTarget: 'ీ', type: 'vowel', priority: 2 },
+  { pattern: 'ii', target: 'ఈ', alternateTarget: 'ీ', type: 'vowel', priority: 2 },
+  { pattern: 'I', target: 'ఈ', alternateTarget: 'ీ', type: 'vowel', priority: 2 },
+  { pattern: 'u', target: 'ఉ', alternateTarget: 'ు', type: 'vowel', priority: 1 },
+  { pattern: 'oo', target: 'ఊ', alternateTarget: 'ూ', type: 'vowel', priority: 2 },
+  { pattern: 'uu', target: 'ఊ', alternateTarget: 'ూ', type: 'vowel', priority: 2 },
+  { pattern: 'U', target: 'ఊ', alternateTarget: 'ూ', type: 'vowel', priority: 2 },
+  { pattern: 'R', target: 'ఋ', alternateTarget: 'ృ', type: 'vowel', priority: 1 },
+  { pattern: 'RR', target: 'ౠ', alternateTarget: 'ౄ', type: 'vowel', priority: 2 },
+  { pattern: 'e', target: 'ఎ', alternateTarget: 'ె', type: 'vowel', priority: 1 },
+  { pattern: 'E', target: 'ఏ', alternateTarget: 'ే', type: 'vowel', priority: 2 },
+  { pattern: 'ae', target: 'ఏ', alternateTarget: 'ే', type: 'vowel', priority: 2 },
+  { pattern: 'ai', target: 'ఐ', alternateTarget: 'ై', type: 'vowel', priority: 2 },
+  { pattern: 'o', target: 'ఒ', alternateTarget: 'ొ', type: 'vowel', priority: 1 },
+  { pattern: 'O', target: 'ఓ', alternateTarget: 'ో', type: 'vowel', priority: 2 },
+  { pattern: 'au', target: 'ఔ', alternateTarget: 'ౌ', type: 'vowel', priority: 2 },
+  { pattern: 'ou', target: 'ఔ', alternateTarget: 'ౌ', type: 'vowel', priority: 2 },
+];

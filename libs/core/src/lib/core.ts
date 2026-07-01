@@ -95,6 +95,14 @@ export class TransliterationEngine {
     text: string;
     confidence: number;
   } {
+    const lowerWord = word.toLowerCase();
+    if (this.config.dictionary && this.config.dictionary[lowerWord]) {
+      return {
+        text: this.config.dictionary[lowerWord],
+        confidence: 1.0,
+      };
+    }
+
     const result: string[] = [];
     let pos = 0;
     let confidence = 1.0;
