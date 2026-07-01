@@ -168,12 +168,91 @@ const hindiData = [
   ]}
 ];
 
-function buildDictionaryFile(langData, varName, outputPath) {
+const teluguBooksData = [
+  { target: 'ఉప్పు కప్పురంబు నొక్క పోలిక నుండు', words: [
+    { telugu: 'ఉప్పు', english: ['uppu', 'upu', 'ooppu'] },
+    { telugu: 'కప్పురంబు', english: ['kappurambu', 'kapurambu', 'kappurambo'] },
+    { telugu: 'నొక్క', english: ['nokka', 'noka'] },
+    { telugu: 'పోలిక', english: ['polika', 'poolika'] },
+    { telugu: 'నుండు', english: ['nundu', 'numdu'] }
+  ]},
+  { target: 'ఎప్పుడు సంపద కలిగిన', words: [
+    { telugu: 'ఎప్పుడు', english: ['eppudu', 'yeppudu', 'eppoodoo'] },
+    { telugu: 'సంపద', english: ['sampada', 'sampadha'] },
+    { telugu: 'కలిగిన', english: ['kaligina', 'kalighina'] }
+  ]},
+  { target: 'విశ్వదాభిరామ వినుర వేమ', words: [
+    { telugu: 'విశ్వదాభిరామ', english: ['viswadabhirama', 'vishwadabhirama', 'vishwadaabhiraama'] },
+    { telugu: 'వినుర', english: ['vinura', 'vinuura'] },
+    { telugu: 'వేమ', english: ['vema', 'vemaa'] }
+  ]},
+  { target: 'ధర్మో రక్షతి రక్షితః', words: [
+    { telugu: 'ధర్మో', english: ['dharmo', 'dharmoo'] },
+    { telugu: 'రక్షతి', english: ['rakshati', 'rakshathi'] },
+    { telugu: 'రక్షితః', english: ['rakshitah', 'rakshithah'] }
+  ]},
+  { target: 'కమలములు నీట బాసిన', words: [
+    { telugu: 'కమలములు', english: ['kamalamulu', 'kamalamuloo'] },
+    { telugu: 'నీట', english: ['neeta', 'nita'] },
+    { telugu: 'బాసిన', english: ['basina', 'baasina'] }
+  ]},
+  { target: 'విద్య నిగూఢ గుప్తమగు విత్తము', words: [
+    { telugu: 'విద్య', english: ['vidya', 'vidhya'] },
+    { telugu: 'నిగూఢ', english: ['nigudha', 'niguudha', 'nighudha'] },
+    { telugu: 'గుప్తమగు', english: ['guptamagu', 'gupthamagu'] },
+    { telugu: 'విత్తము', english: ['vittamu', 'vitamu'] }
+  ]}
+];
+
+const hindiBooksData = [
+  { target: 'काल करे सो आज कर', words: [
+    { hindi: 'काल', english: ['kaal'] },
+    { hindi: 'करे', english: ['kare', 'karey'] },
+    { hindi: 'सो', english: ['so', 'soo'] },
+    { hindi: 'आज', english: ['aaj', 'aj'] },
+    { hindi: 'कर', english: ['kar'] }
+  ]},
+  { target: 'दुख में सुमिरन सब करे', words: [
+    { hindi: 'दुख', english: ['dukh', 'dukha'] },
+    { hindi: 'में', english: ['mein', 'me'] },
+    { hindi: 'सुमिरन', english: ['sumiran', 'soomiran'] },
+    { hindi: 'सब', english: ['sab', 'sub'] },
+    { hindi: 'करे', english: ['kare', 'karey'] }
+  ]},
+  { target: 'बड़ा हुआ तो क्या हुआ', words: [
+    { hindi: 'बड़ा', english: ['bada', 'badaa'] },
+    { hindi: 'हुआ', english: ['hua', 'huaa'] },
+    { hindi: 'तो', english: ['to', 'toh'] },
+    { hindi: 'क्या', english: ['kya', 'kyaa'] },
+    { hindi: 'हुआ', english: ['hua', 'huaa'] }
+  ]},
+  { target: 'गुरु गोबिंद दोऊ खड़े', words: [
+    { hindi: 'गुरु', english: ['guru', 'guroo'] },
+    { hindi: 'गोबिंद', english: ['gobind', 'gobimd'] },
+    { hindi: 'दोऊ', english: ['dou', 'douu'] },
+    { hindi: 'खड़े', english: ['khade', 'khadey'] }
+  ]},
+  { target: 'रघुकुल रीत सदा चली आई', words: [
+    { hindi: 'रघुकुल', english: ['raghukul', 'raghukool'] },
+    { hindi: 'रीत', english: ['reet', 'rit'] },
+    { hindi: 'सदा', english: ['sada', 'sadaa'] },
+    { hindi: 'चली', english: ['chali', 'chalee'] },
+    { hindi: 'आई', english: ['aayi', 'aai', 'aayi'] }
+  ]},
+  { target: 'सत्यमेव जयते', words: [
+    { hindi: 'सत्यमेव', english: ['satyameva', 'satyamev'] },
+    { hindi: 'जयते', english: ['jayate', 'jaytey', 'jayatey'] }
+  ]}
+];
+
+function buildDictionaryFile(datasets, varName, outputPath) {
   let dict = {};
-  for (const song of langData) {
-    for (const w of song.words) {
-      for (const e of w.english) {
-        dict[e.toLowerCase()] = w[varName];
+  for (const langData of datasets) {
+    for (const song of langData) {
+      for (const w of song.words) {
+        for (const e of w.english) {
+          dict[e.toLowerCase()] = w[varName];
+        }
       }
     }
   }
@@ -233,12 +312,14 @@ describe('${desc}', () => {
   return testCasesCount;
 }
 
-buildDictionaryFile(teluguData, 'telugu', path.join(__dirname, 'libs/shared/src/lib/languages/telugu/dictionary.ts'));
-const tCount = buildTestFile(teluguData, 'telugu', 'Telugu Famous Songs Pallavi Transliteration', path.join(__dirname, 'libs/core/src/lib/tests/telugu-songs.spec.ts'));
+buildDictionaryFile([teluguData, teluguBooksData], 'telugu', path.join(__dirname, 'libs/shared/src/lib/languages/telugu/dictionary.ts'));
+const tCount1 = buildTestFile(teluguData, 'telugu', 'Telugu Famous Songs Pallavi Transliteration', path.join(__dirname, 'libs/core/src/lib/tests/telugu-songs.spec.ts'));
+const tCount2 = buildTestFile(teluguBooksData, 'telugu', 'Telugu Book Quotes Transliteration', path.join(__dirname, 'libs/core/src/lib/tests/telugu-books.spec.ts'));
 
 fs.mkdirSync(path.join(__dirname, 'libs/shared/src/lib/languages/hindi'), { recursive: true });
-buildDictionaryFile(hindiData, 'hindi', path.join(__dirname, 'libs/shared/src/lib/languages/hindi/dictionary.ts'));
-const hCount = buildTestFile(hindiData, 'hindi', 'Hindi Famous Songs Pallavi Transliteration', path.join(__dirname, 'libs/core/src/lib/tests/hindi-songs.spec.ts'));
+buildDictionaryFile([hindiData, hindiBooksData], 'hindi', path.join(__dirname, 'libs/shared/src/lib/languages/hindi/dictionary.ts'));
+const hCount1 = buildTestFile(hindiData, 'hindi', 'Hindi Famous Songs Pallavi Transliteration', path.join(__dirname, 'libs/core/src/lib/tests/hindi-songs.spec.ts'));
+const hCount2 = buildTestFile(hindiBooksData, 'hindi', 'Hindi Book Quotes Transliteration', path.join(__dirname, 'libs/core/src/lib/tests/hindi-books.spec.ts'));
 
-console.log('Telugu Tests Generated:', tCount);
-console.log('Hindi Tests Generated:', hCount);
+console.log('Telugu Tests Generated:', tCount1 + tCount2);
+console.log('Hindi Tests Generated:', hCount1 + hCount2);
