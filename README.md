@@ -99,9 +99,9 @@ xinglish/
 
 Currently supported:
 - **Hindi** (Devanagari script)
+- **Telugu** (Telugu script)
 
 Planned support:
-- Telugu
 - Tamil
 - Kannada
 - Malayalam

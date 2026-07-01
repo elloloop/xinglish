@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react';
 
-import React from './react';
+import { TransliterationEditorComponent } from './react';
 
-describe('React', () => {
+describe('TransliterationEditorComponent', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<React />);
+    const { baseElement } = render(<TransliterationEditorComponent language="hindi" layout="stacked" />);
     expect(baseElement).toBeTruthy();
   });
 });

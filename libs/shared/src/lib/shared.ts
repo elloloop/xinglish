@@ -20,10 +20,14 @@ export type EditorLayout = 'side-by-side' | 'stacked' | 'output-only';
  * Phonetic mapping rule
  */
 export interface PhoneticRule {
-  /** Latin input pattern (regex) */
+  /** Latin input pattern (regex or string) */
   pattern: string;
-  /** Target script character(s) */
+  /** Target script character(s) (for vowels, this is the independent form) */
   target: string;
+  /** Alternate target character(s) (for vowels, this is the dependent sign / matra) */
+  alternateTarget?: string;
+  /** Type of the character: 'vowel', 'consonant', or 'special' */
+  type?: 'vowel' | 'consonant' | 'special';
   /** Priority for longest match (higher = more specific) */
   priority?: number;
   /** Whether this rule should be applied at word boundaries */
@@ -40,6 +44,10 @@ export interface LanguageConfig {
   name: string;
   /** Native script name */
   scriptName: string;
+  /** Virama (halant) character for the script */
+  virama: string;
+  /** Whether to retain virama at the end of words (e.g. true for Telugu, false for Hindi) */
+  retainWordFinalVirama?: boolean;
   /** Phonetic mapping rules */
   rules: PhoneticRule[];
   /** Unicode range for the script */

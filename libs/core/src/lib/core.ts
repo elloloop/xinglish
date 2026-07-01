@@ -91,9 +91,6 @@ export class TransliterationEngine {
     };
   }
 
-  /**
-   * Transliterate a single word
-   */
   private transliterateWord(word: string): {
     text: string;
     confidence: number;
@@ -101,12 +98,36 @@ export class TransliterationEngine {
     const result: string[] = [];
     let pos = 0;
     let confidence = 1.0;
+    let isHalfConsonant = false;
 
     while (pos < word.length) {
       const match = this.findLongestMatch(word, pos);
 
       if (match) {
-        result.push(match.target);
+        if (match.type === 'vowel') {
+          if (isHalfConsonant) {
+            // Remove the virama
+            result.pop();
+            // Add the dependent vowel sign (matra), if any
+            if (match.alternateTarget) {
+              result.push(match.alternateTarget);
+            }
+          } else {
+            // Add the independent vowel
+            result.push(match.target);
+          }
+          isHalfConsonant = false;
+        } else if (match.type === 'consonant') {
+          result.push(match.target);
+          result.push(this.config.virama);
+          isHalfConsonant = true;
+        } else {
+          // Special characters (anusvara, visarga, punctuation, numbers)
+          result.push(match.target);
+          // Assuming special chars don't act as consonants that combine
+          isHalfConsonant = false;
+        }
+
         pos += match.pattern.length;
         confidence *= match.priority ? match.priority / 10 : 0.8; // Normalize confidence
       } else {
@@ -114,7 +135,13 @@ export class TransliterationEngine {
         result.push(word[pos]);
         pos++;
         confidence *= 0.5; // Lower confidence for unmatched characters
+        isHalfConsonant = false;
       }
+    }
+
+    // Handle word-final virama
+    if (isHalfConsonant && !this.config.retainWordFinalVirama) {
+      result.pop();
     }
 
     return {

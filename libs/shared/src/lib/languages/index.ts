@@ -1,5 +1,6 @@
 import { LanguageConfig, SupportedLanguage } from '../shared';
 import { hindiConfig } from './hindi';
+import { teluguConfig } from './telugu';
 
 /**
  * Registry of supported language configurations
@@ -7,8 +8,8 @@ import { hindiConfig } from './hindi';
  */
 export const languageRegistry: Partial<Record<SupportedLanguage, LanguageConfig>> = {
   hindi: hindiConfig,
+  telugu: teluguConfig,
   // TODO: Add other language configurations as they are implemented
-  // telugu: teluguConfig,
   // tamil: tamilConfig,
   // kannada: kannadaConfig,
   // malayalam: malayalamConfig,

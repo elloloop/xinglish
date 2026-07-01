@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Angular } from './angular';
+import { TransliterationEditorComponent } from './angular';
 
-describe('Angular', () => {
-  let component: Angular;
-  let fixture: ComponentFixture<Angular>;
+describe('TransliterationEditorComponent', () => {
+  let component: TransliterationEditorComponent;
+  let fixture: ComponentFixture<TransliterationEditorComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Angular],
+      imports: [TransliterationEditorComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Angular);
+    fixture = TestBed.createComponent(TransliterationEditorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

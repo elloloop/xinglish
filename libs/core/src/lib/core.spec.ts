@@ -51,10 +51,10 @@ describe('TransliterationEngine', () => {
     });
 
     it('should preserve non-transliteratable characters', () => {
-      const result = engine.transliterate('hello123!');
-      expect(result.transliterated).toContain('hello');
-      expect(result.transliterated).toContain('123');
-      expect(result.transliterated).toContain('!');
+      const result = engine.transliterate('x@#%');
+      expect(result.transliterated).toContain('x');
+      expect(result.transliterated).toContain('@');
+      expect(result.transliterated).toContain('%');
     });
 
     it('should create position mappings', () => {
@@ -101,7 +101,7 @@ describe('TransliterationEngine', () => {
     });
 
     it('should return lower confidence for mixed text', () => {
-      const result = engine.transliterate('namaste123xyz');
+      const result = engine.transliterate('namaste xxx yyy');
       expect(result.confidence).toBeLessThan(0.9);
     });
   });

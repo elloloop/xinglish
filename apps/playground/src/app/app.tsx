@@ -13,15 +13,16 @@ export function App() {
     setResult(newResult);
   };
 
-  const sampleTexts = {
+  const sampleTexts: Record<string, string> = {
     hindi: 'namaste, kaise ho aap?',
+    telugu: 'namaskaram, ela unnaru?',
     // TODO: Add sample texts for other languages when implemented
   };
 
   const languages: { code: SupportedLanguage; name: string }[] = [
     { code: 'hindi', name: 'Hindi (हिंदी)' },
+    { code: 'telugu', name: 'Telugu (తెలుగు)' },
     // TODO: Add other languages when configurations are implemented
-    // { code: 'telugu', name: 'Telugu (తెలుగు)' },
     // { code: 'tamil', name: 'Tamil (தமிழ்)' },
     // { code: 'kannada', name: 'Kannada (ಕನ್ನಡ)' },
     // { code: 'malayalam', name: 'Malayalam (മലയാളം)' },

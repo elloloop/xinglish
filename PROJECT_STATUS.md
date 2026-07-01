@@ -74,14 +74,24 @@
 - Complete Devanagari script mapping
 - Vowels (स्वर): a, aa, i, ii, u, uu, e, ai, o, au
 - Consonants (व्यंजन): k, kh, g, gh, ch, chh, j, jh, etc.
-- Vowel signs (मात्रा): aa, i, ii, u, uu, e, ai, o, au
+- Vowel signs (मात्रा): dynamically generated
 - Special characters: N (anusvara), H (visarga), R (r-kaar)
 - Numbers: 0-9 in Devanagari
 - Punctuation: । (danda), ॥ (double danda)
 
+### Telugu Language Support
+
+- Complete Telugu script mapping
+- Context-aware virama handling
+- Vowels (అచ్చులు): a, aa, i, ii, u, uu, e, ee, ai, o, oo, au
+- Consonants (హల్లులు): k, kh, g, gh, ch, chh, j, jh, etc.
+- Vowel signs (గుణింతాలు): dynamically generated
+- Numbers: 0-9 in Telugu
+
 ### Editor Features
 
 - Real-time transliteration
+- Context-aware matra (vowel sign) and virama handling
 - Three layout modes
 - Suggestion system
 - Confidence scoring
@@ -93,7 +103,7 @@
 
 ### 1. Additional Language Support
 
-- [ ] Telugu (తెలుగు) configuration
+- [x] Telugu (తెలుగు) configuration
 - [ ] Tamil (தமிழ்) configuration
 - [ ] Kannada (ಕನ್ನಡ) configuration
 - [ ] Malayalam (മലയാളം) configuration
