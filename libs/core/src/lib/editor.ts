@@ -202,12 +202,29 @@ export class TransliterationEditor {
   }
 
   /**
-   * Update suggestions display
+   * Update suggestions display based on cursor position
    */
-  private updateSuggestions(text: string): void {
+  private updateSuggestions(originalText: string): void {
     if (!this.suggestionsElement) return;
 
-    const suggestions = this.engine.getSuggestions(text);
+    // Get the word under cursor
+    const cursorPosition = this.inputElement.selectionStart || 0;
+    const textBeforeCursor = originalText.substring(0, cursorPosition);
+    const textAfterCursor = originalText.substring(cursorPosition);
+    
+    const wordStart = textBeforeCursor.lastIndexOf(' ') + 1;
+    let wordEnd = textAfterCursor.indexOf(' ');
+    if (wordEnd === -1) wordEnd = textAfterCursor.length;
+    wordEnd += cursorPosition;
+
+    const currentWord = originalText.substring(wordStart, wordEnd).trim();
+
+    if (!currentWord) {
+      this.suggestionsElement.style.display = 'none';
+      return;
+    }
+
+    const suggestions = this.engine.getSuggestions(currentWord);
 
     if (suggestions.length === 0) {
       this.suggestionsElement.style.display = 'none';
@@ -219,7 +236,7 @@ export class TransliterationEditor {
 
     const title = document.createElement('div');
     title.className = 'xinglish-suggestions-title';
-    title.textContent = 'Suggestions:';
+    title.textContent = 'Options:';
     this.suggestionsElement.appendChild(title);
 
     suggestions.slice(0, 5).forEach((suggestion) => {
@@ -229,7 +246,7 @@ export class TransliterationEditor {
       item.title = suggestion.explanation || '';
 
       item.addEventListener('click', () => {
-        this.selectSuggestion(suggestion.text);
+        this.selectSuggestion(suggestion.text, wordStart, wordEnd);
       });
 
       this.suggestionsElement!.appendChild(item);
@@ -239,11 +256,18 @@ export class TransliterationEditor {
   /**
    * Select a suggestion
    */
-  private selectSuggestion(text: string): void {
-    // For now, just append the suggestion to the input
-    // In a more sophisticated implementation, this would replace the current word
+  private selectSuggestion(text: string, wordStart: number, wordEnd: number): void {
+    // Replace the current word with the suggestion
     const currentValue = this.inputElement.value;
-    this.inputElement.value = currentValue + ' ' + text;
+    const newValue = currentValue.substring(0, wordStart) + text + currentValue.substring(wordEnd);
+    
+    this.inputElement.value = newValue;
+    this.inputElement.selectionStart = this.inputElement.selectionEnd = wordStart + text.length;
+    
+    // Focus back to input
+    this.inputElement.focus();
+    
+    // Trigger input event
     this.inputElement.dispatchEvent(new Event('input', { bubbles: true }));
   }
 

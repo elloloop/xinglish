@@ -222,19 +222,10 @@ export class TransliterationEngine {
   /**
    * Get suggestions for ambiguous transliterations
    */
-  getSuggestions(text: string): TransliterationSuggestion[] {
-    const suggestions: TransliterationSuggestion[] = [];
-
-    // Find words that might have multiple interpretations
-    const words = text.split(/\s+/);
-
-    for (const word of words) {
-      const alternatives = this.findAlternatives(word);
-      if (alternatives.length > 1) {
-        suggestions.push(...alternatives);
-      }
-    }
-
+  getSuggestions(word: string): TransliterationSuggestion[] {
+    // We expect `word` to be a single word now, based on the editor update.
+    // If multiple words are passed somehow, we'll just process it as one.
+    const suggestions = this.findAlternatives(word);
     return suggestions.sort((a, b) => b.confidence - a.confidence);
   }
 
@@ -245,24 +236,42 @@ export class TransliterationEngine {
     const alternatives: TransliterationSuggestion[] = [];
     const seen = new Set<string>();
 
-    // Try different rule combinations
-    for (let i = 0; i < this.rules.length; i++) {
-      for (let j = i + 1; j < this.rules.length; j++) {
-        const rule1 = this.rules[i];
-        const rule2 = this.rules[j];
+    const addSuggestion = (text: string, conf: number, exp: string) => {
+      if (!seen.has(text) && text.trim()) {
+        seen.add(text);
+        alternatives.push({ text, confidence: conf, explanation: exp });
+      }
+    };
 
-        // Check if these rules could be combined
-        if (rule1.pattern + rule2.pattern === word) {
-          const combined = rule1.target + rule2.target;
-          if (!seen.has(combined)) {
-            seen.add(combined);
-            alternatives.push({
-              text: combined,
-              confidence: 0.8,
-              explanation: `Combination of ${rule1.pattern} + ${rule2.pattern}`,
-            });
-          }
-        }
+    // 1. The standard transliteration
+    const standard = this.transliterateWord(word).text;
+    addSuggestion(standard, 1.0, 'Standard transliteration');
+
+    // 2. The original english word
+    addSuggestion(word, 0.95, 'Original Latin word');
+
+    // 3. Toggle virama at the end
+    if (standard.endsWith(this.config.virama)) {
+      addSuggestion(standard.slice(0, -this.config.virama.length), 0.9, 'Without trailing halant/virama');
+    } else {
+      addSuggestion(standard + this.config.virama, 0.8, 'With trailing halant/virama');
+    }
+
+    // 4. Try phonetic variations
+    const variations = [
+      { from: /v/g, to: 'w' },
+      { from: /w/g, to: 'v' },
+      { from: /ee/g, to: 'i' },
+      { from: /oo/g, to: 'u' },
+      { from: /(?<!a)a(?!a)/g, to: 'aa' }, // single 'a' to 'aa'
+      { from: /aa/g, to: 'a' },
+    ];
+
+    for (const v of variations) {
+      if (word.match(v.from)) {
+        const altWord = word.replace(v.from, v.to);
+        const altTranslit = this.transliterateWord(altWord).text;
+        addSuggestion(altTranslit, 0.85, `Alternative spelling (${altWord})`);
       }
     }
 

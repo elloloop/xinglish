@@ -15,5 +15,5 @@
       ]
     }
   },
-  "extends": "../../../../libs/angular/tsconfig.lib.prod.json"
+  "extends": "../../../../../../../../../libs/react/tsconfig.lib.json"
 }
