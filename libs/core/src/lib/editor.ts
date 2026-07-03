@@ -16,6 +16,12 @@ export class TransliterationEditor {
   private inputElement!: HTMLTextAreaElement | HTMLInputElement;
   private outputElement!: HTMLElement;
   private suggestionsElement: HTMLElement | null = null;
+  private inlineState = {
+    active: false,
+    englishWord: '',
+    startPos: 0,
+    nativeWordLength: 0
+  };
 
   constructor(container: HTMLElement, config: EditorConfig) {
     this.container = container;
@@ -60,6 +66,9 @@ export class TransliterationEditor {
       'keydown',
       this.handleKeydown.bind(this)
     );
+    this.inputElement.addEventListener('click', () => {
+      this.inlineState.active = false;
+    });
   }
 
   /**
@@ -198,6 +207,66 @@ export class TransliterationEditor {
     const end = target.selectionEnd;
     const value = target.value;
 
+    if (this.config.layout === 'inline') {
+      const isPrintableKey = event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey;
+      
+      if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
+        this.inlineState.active = false;
+      }
+
+      if (isPrintableKey && event.key !== ' ') {
+        if (!this.inlineState.active) {
+          this.inlineState.active = true;
+          this.inlineState.englishWord = event.key;
+          this.inlineState.startPos = start ?? 0;
+          const trans = this.engine.transliterate(this.inlineState.englishWord).transliterated;
+          this.inlineState.nativeWordLength = trans.length;
+          
+          event.preventDefault();
+          target.value = value.substring(0, this.inlineState.startPos) + trans + value.substring(end ?? start ?? 0);
+          target.selectionStart = target.selectionEnd = this.inlineState.startPos + trans.length;
+          target.dispatchEvent(new Event('input', { bubbles: true }));
+        } else {
+          this.inlineState.englishWord += event.key;
+          const trans = this.engine.transliterate(this.inlineState.englishWord).transliterated;
+          
+          event.preventDefault();
+          target.value = value.substring(0, this.inlineState.startPos) + trans + value.substring(this.inlineState.startPos + this.inlineState.nativeWordLength);
+          this.inlineState.nativeWordLength = trans.length;
+          
+          target.selectionStart = target.selectionEnd = this.inlineState.startPos + trans.length;
+          target.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        return;
+      }
+
+      if (event.key === 'Backspace' && this.inlineState.active) {
+        if (this.inlineState.englishWord.length > 0) {
+          event.preventDefault();
+          this.inlineState.englishWord = this.inlineState.englishWord.slice(0, -1);
+          
+          if (this.inlineState.englishWord.length === 0) {
+            target.value = value.substring(0, this.inlineState.startPos) + value.substring(this.inlineState.startPos + this.inlineState.nativeWordLength);
+            this.inlineState.nativeWordLength = 0;
+            this.inlineState.active = false;
+            target.selectionStart = target.selectionEnd = this.inlineState.startPos;
+          } else {
+            const trans = this.engine.transliterate(this.inlineState.englishWord).transliterated;
+            target.value = value.substring(0, this.inlineState.startPos) + trans + value.substring(this.inlineState.startPos + this.inlineState.nativeWordLength);
+            this.inlineState.nativeWordLength = trans.length;
+            target.selectionStart = target.selectionEnd = this.inlineState.startPos + trans.length;
+          }
+          target.dispatchEvent(new Event('input', { bubbles: true }));
+          return;
+        }
+      }
+
+      if (event.key === ' ' || event.key === 'Enter') {
+        this.inlineState.active = false;
+        // let the default space or enter go through!
+      }
+    }
+
     // Handle special keys if needed
     if (event.key === 'Tab') {
       event.preventDefault();
@@ -209,27 +278,6 @@ export class TransliterationEditor {
 
       // Trigger input event
       target.dispatchEvent(new Event('input', { bubbles: true }));
-    } else if (event.key === ' ' && this.config.layout === 'inline') {
-      // Inline transliteration on space
-      if (start !== null && start === end) {
-        const textBeforeCursor = value.substring(0, start);
-        const textAfterCursor = value.substring(start);
-        const lastSpaceIndex = textBeforeCursor.lastIndexOf(' ');
-        const currentWord = textBeforeCursor.substring(lastSpaceIndex + 1);
-
-        if (currentWord.trim().length > 0) {
-          event.preventDefault();
-          const transliterated = this.engine.transliterate(currentWord).transliterated;
-          
-          target.value = value.substring(0, lastSpaceIndex + 1) + transliterated + ' ' + textAfterCursor;
-          
-          // Move cursor after the inserted space
-          const newCursorPos = lastSpaceIndex + 1 + transliterated.length + 1;
-          target.selectionStart = target.selectionEnd = newCursorPos;
-          
-          target.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-      }
     }
   }
 
