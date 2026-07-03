@@ -14,7 +14,7 @@ export type SupportedLanguage =
 /**
  * Editor layout modes
  */
-export type EditorLayout = 'side-by-side' | 'stacked' | 'output-only';
+export type EditorLayout = 'side-by-side' | 'stacked' | 'output-only' | 'inline';
 
 /**
  * Phonetic mapping rule

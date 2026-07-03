@@ -34,6 +34,7 @@ export function App() {
   const layouts: { value: EditorLayout; name: string }[] = [
     { value: 'side-by-side', name: 'Side by Side' },
     { value: 'stacked', name: 'Stacked' },
+    { value: 'inline', name: 'Inline (like Google Input)' },
     { value: 'output-only', name: 'Output Only' },
   ];
 

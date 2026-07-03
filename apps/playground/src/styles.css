@@ -102,6 +102,21 @@ p {
   flex-direction: column;
 }
 
+.xinglish-output-only {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Inline Layout */
+.xinglish-inline {
+  display: flex;
+  flex-direction: column;
+}
+
+.xinglish-inline .xinglish-input-container {
+  padding-right: 0;
+}
+
 /* Suggestions styles */
 .xinglish-suggestions {
   padding: 8px 12px;

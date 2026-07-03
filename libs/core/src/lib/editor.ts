@@ -78,6 +78,9 @@ export class TransliterationEditor {
       case 'output-only':
         this.renderOutputOnly();
         break;
+      case 'inline':
+        this.renderInline();
+        break;
     }
   }
 
@@ -152,6 +155,26 @@ export class TransliterationEditor {
   }
 
   /**
+   * Render inline layout
+   */
+  private renderInline(): void {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'xinglish-inline';
+
+    const inputContainer = document.createElement('div');
+    inputContainer.className = 'xinglish-input-container';
+    inputContainer.appendChild(this.inputElement);
+
+    wrapper.appendChild(inputContainer);
+
+    if (this.suggestionsElement) {
+      wrapper.appendChild(this.suggestionsElement);
+    }
+
+    this.container.appendChild(wrapper);
+  }
+
+  /**
    * Handle input changes
    */
   private handleInput(event: Event): void {
@@ -170,15 +193,15 @@ export class TransliterationEditor {
    * Handle keydown events
    */
   private handleKeydown(event: KeyboardEvent): void {
+    const target = event.target as HTMLTextAreaElement | HTMLInputElement;
+    const start = target.selectionStart;
+    const end = target.selectionEnd;
+    const value = target.value;
+
     // Handle special keys if needed
     if (event.key === 'Tab') {
       event.preventDefault();
       // Insert tab character
-      const target = event.target as HTMLTextAreaElement | HTMLInputElement;
-      const start = target.selectionStart;
-      const end = target.selectionEnd;
-      const value = target.value;
-
       if (start !== null && end !== null) {
         target.value = value.substring(0, start) + '\t' + value.substring(end);
         target.selectionStart = target.selectionEnd = start + 1;
@@ -186,6 +209,27 @@ export class TransliterationEditor {
 
       // Trigger input event
       target.dispatchEvent(new Event('input', { bubbles: true }));
+    } else if (event.key === ' ' && this.config.layout === 'inline') {
+      // Inline transliteration on space
+      if (start !== null && start === end) {
+        const textBeforeCursor = value.substring(0, start);
+        const textAfterCursor = value.substring(start);
+        const lastSpaceIndex = textBeforeCursor.lastIndexOf(' ');
+        const currentWord = textBeforeCursor.substring(lastSpaceIndex + 1);
+
+        if (currentWord.trim().length > 0) {
+          event.preventDefault();
+          const transliterated = this.engine.transliterate(currentWord).transliterated;
+          
+          target.value = value.substring(0, lastSpaceIndex + 1) + transliterated + ' ' + textAfterCursor;
+          
+          // Move cursor after the inserted space
+          const newCursorPos = lastSpaceIndex + 1 + transliterated.length + 1;
+          target.selectionStart = target.selectionEnd = newCursorPos;
+          
+          target.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+      }
     }
   }
 
