@@ -20,7 +20,9 @@ export class TransliterationEditor {
     active: false,
     englishWord: '',
     startPos: 0,
-    nativeWordLength: 0
+    nativeWordLength: 0,
+    suggestions: [] as string[],
+    selectedIndex: 0
   };
 
   constructor(container: HTMLElement, config: EditorConfig) {
@@ -67,7 +69,7 @@ export class TransliterationEditor {
       this.handleKeydown.bind(this)
     );
     this.inputElement.addEventListener('click', () => {
-      this.inlineState.active = false;
+      this.closeInlineSuggestions();
     });
   }
 
@@ -210,8 +212,30 @@ export class TransliterationEditor {
     if (this.config.layout === 'inline') {
       const isPrintableKey = event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey;
       
-      if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
-        this.inlineState.active = false;
+      if (this.inlineState.active) {
+        if (event.key === 'ArrowDown') {
+          event.preventDefault();
+          this.inlineState.selectedIndex = Math.min(this.inlineState.selectedIndex + 1, this.inlineState.suggestions.length - 1);
+          this.renderInlineSuggestions();
+          return;
+        }
+        if (event.key === 'ArrowUp') {
+          event.preventDefault();
+          this.inlineState.selectedIndex = Math.max(this.inlineState.selectedIndex - 1, 0);
+          this.renderInlineSuggestions();
+          return;
+        }
+        if (event.key === 'Enter') {
+          if (this.inlineState.suggestions.length > 0) {
+            event.preventDefault();
+            this.commitInlineSuggestion();
+          }
+          this.closeInlineSuggestions();
+          return;
+        }
+        if (['ArrowLeft', 'ArrowRight'].includes(event.key)) {
+          this.closeInlineSuggestions();
+        }
       }
 
       if (isPrintableKey && event.key !== ' ') {
@@ -219,18 +243,21 @@ export class TransliterationEditor {
           this.inlineState.active = true;
           this.inlineState.englishWord = event.key;
           this.inlineState.startPos = start ?? 0;
-          const trans = this.engine.transliterate(this.inlineState.englishWord).transliterated;
-          this.inlineState.nativeWordLength = trans.length;
+          this.inlineState.selectedIndex = 0;
+          this.updateInlineSuggestionsUI();
           
           event.preventDefault();
+          const trans = this.inlineState.suggestions[0] || this.engine.transliterate(this.inlineState.englishWord).transliterated;
+          this.inlineState.nativeWordLength = trans.length;
           target.value = value.substring(0, this.inlineState.startPos) + trans + value.substring(end ?? start ?? 0);
           target.selectionStart = target.selectionEnd = this.inlineState.startPos + trans.length;
           target.dispatchEvent(new Event('input', { bubbles: true }));
         } else {
           this.inlineState.englishWord += event.key;
-          const trans = this.engine.transliterate(this.inlineState.englishWord).transliterated;
+          this.updateInlineSuggestionsUI();
           
           event.preventDefault();
+          const trans = this.inlineState.suggestions[0] || this.engine.transliterate(this.inlineState.englishWord).transliterated;
           target.value = value.substring(0, this.inlineState.startPos) + trans + value.substring(this.inlineState.startPos + this.inlineState.nativeWordLength);
           this.inlineState.nativeWordLength = trans.length;
           
@@ -248,10 +275,11 @@ export class TransliterationEditor {
           if (this.inlineState.englishWord.length === 0) {
             target.value = value.substring(0, this.inlineState.startPos) + value.substring(this.inlineState.startPos + this.inlineState.nativeWordLength);
             this.inlineState.nativeWordLength = 0;
-            this.inlineState.active = false;
+            this.closeInlineSuggestions();
             target.selectionStart = target.selectionEnd = this.inlineState.startPos;
           } else {
-            const trans = this.engine.transliterate(this.inlineState.englishWord).transliterated;
+            this.updateInlineSuggestionsUI();
+            const trans = this.inlineState.suggestions[0] || this.engine.transliterate(this.inlineState.englishWord).transliterated;
             target.value = value.substring(0, this.inlineState.startPos) + trans + value.substring(this.inlineState.startPos + this.inlineState.nativeWordLength);
             this.inlineState.nativeWordLength = trans.length;
             target.selectionStart = target.selectionEnd = this.inlineState.startPos + trans.length;
@@ -261,9 +289,8 @@ export class TransliterationEditor {
         }
       }
 
-      if (event.key === ' ' || event.key === 'Enter') {
-        this.inlineState.active = false;
-        // let the default space or enter go through!
+      if (event.key === ' ') {
+        this.closeInlineSuggestions();
       }
     }
 
@@ -361,6 +388,87 @@ export class TransliterationEditor {
     
     // Trigger input event
     this.inputElement.dispatchEvent(new Event('input', { bubbles: true }));
+    if (this.config.layout === 'inline') {
+      this.closeInlineSuggestions();
+    }
+  }
+
+  /**
+   * Helpers for inline mode suggestions
+   */
+  private closeInlineSuggestions(): void {
+    this.inlineState.active = false;
+    this.inlineState.englishWord = '';
+    this.inlineState.suggestions = [];
+    if (this.suggestionsElement) {
+      this.suggestionsElement.style.display = 'none';
+    }
+  }
+
+  private commitInlineSuggestion(): void {
+    const text = this.inlineState.suggestions[this.inlineState.selectedIndex];
+    if (text) {
+      const currentValue = this.inputElement.value;
+      const newValue = currentValue.substring(0, this.inlineState.startPos) + text + currentValue.substring(this.inlineState.startPos + this.inlineState.nativeWordLength);
+      
+      this.inputElement.value = newValue;
+      this.inputElement.selectionStart = this.inputElement.selectionEnd = this.inlineState.startPos + text.length;
+      this.inputElement.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  }
+
+  private updateInlineSuggestionsUI(): void {
+    if (!this.suggestionsElement || !this.config.showSuggestions) return;
+    const suggestions = this.engine.getSuggestions(this.inlineState.englishWord);
+    this.inlineState.suggestions = suggestions.map(s => s.text);
+    this.inlineState.selectedIndex = 0;
+    this.renderInlineSuggestions();
+  }
+
+  private renderInlineSuggestions(): void {
+    if (!this.suggestionsElement) return;
+    if (this.inlineState.suggestions.length === 0) {
+      this.suggestionsElement.style.display = 'none';
+      return;
+    }
+
+    this.suggestionsElement.style.display = 'block';
+    // Position absolutely below the cursor
+    // (A simple approach for now, usually would require getCaretCoordinates)
+    this.suggestionsElement.style.top = '40px'; 
+    this.suggestionsElement.style.left = '12px';
+
+    this.suggestionsElement.innerHTML = '';
+    const title = document.createElement('div');
+    title.className = 'xinglish-suggestions-title';
+    title.textContent = 'Suggestions';
+    this.suggestionsElement.appendChild(title);
+
+    this.inlineState.suggestions.slice(0, 5).forEach((text, i) => {
+      const item = document.createElement('div');
+      item.className = 'xinglish-suggestion-item' + (i === this.inlineState.selectedIndex ? ' selected' : '');
+      
+      // Number the suggestions 1 to 5
+      const numberSpan = document.createElement('span');
+      numberSpan.style.color = '#999';
+      numberSpan.style.marginRight = '8px';
+      numberSpan.style.fontSize = '12px';
+      numberSpan.textContent = String(i + 1);
+      
+      const textSpan = document.createElement('span');
+      textSpan.textContent = text;
+      
+      item.appendChild(numberSpan);
+      item.appendChild(textSpan);
+
+      item.addEventListener('click', () => {
+        this.inlineState.selectedIndex = i;
+        this.commitInlineSuggestion();
+        this.closeInlineSuggestions();
+      });
+
+      this.suggestionsElement!.appendChild(item);
+    });
   }
 
   /**
@@ -368,6 +476,15 @@ export class TransliterationEditor {
    */
   getResult(): TransliterationResult {
     return this.engine.transliterate(this.inputElement.value);
+  }
+
+  /**
+   * Add custom word to dictionary and refresh
+   */
+  addDictionaryWord(englishWord: string, nativeWord: string): void {
+    this.engine.addDictionaryWord(englishWord, nativeWord);
+    // trigger a re-transliteration
+    this.inputElement.dispatchEvent(new Event('input', { bubbles: true }));
   }
 
   /**

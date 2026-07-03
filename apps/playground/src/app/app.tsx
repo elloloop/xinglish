@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { TransliterationEditorComponent, useTransliteration } from '@elloloop/xinglish-react';
+import React, { useState, useRef } from 'react';
+import { TransliterationEditorComponent, useTransliteration, TransliterationEditorRef } from '@elloloop/xinglish-react';
 import { SupportedLanguage, EditorLayout, TransliterationResult } from '@elloloop/xinglish-shared';
 import './app.module.css';
 
@@ -8,9 +8,25 @@ export function App() {
   const [selectedLayout, setSelectedLayout] = useState<EditorLayout>('side-by-side');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [result, setResult] = useState<TransliterationResult | null>(null);
+  
+  const editorRef = useRef<TransliterationEditorRef>(null);
+  const [feedbackEnglish, setFeedbackEnglish] = useState('');
+  const [feedbackNative, setFeedbackNative] = useState('');
+  const [feedbackMessage, setFeedbackMessage] = useState('');
 
   const handleResultChange = (newResult: TransliterationResult) => {
     setResult(newResult);
+  };
+
+  const handleAddDictionaryWord = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editorRef.current && feedbackEnglish && feedbackNative) {
+      editorRef.current.addDictionaryWord(feedbackEnglish, feedbackNative);
+      setFeedbackMessage(`Added: ${feedbackEnglish} -> ${feedbackNative}`);
+      setFeedbackEnglish('');
+      setFeedbackNative('');
+      setTimeout(() => setFeedbackMessage(''), 3000);
+    }
   };
 
   const sampleTexts: Record<string, string> = {
@@ -97,6 +113,7 @@ export function App() {
 
         <div className="editor-container">
           <TransliterationEditorComponent
+            ref={editorRef}
             language={selectedLanguage}
             layout={selectedLayout}
             showSuggestions={showSuggestions}
@@ -104,6 +121,29 @@ export function App() {
             onChange={handleResultChange}
             className="demo-editor"
           />
+        </div>
+
+        <div className="feedback-section">
+          <h3>✍️ Teach Xinglish a Word</h3>
+          <p>Did it get a spelling wrong? Add it to your personal dictionary and it will learn instantly!</p>
+          <form onSubmit={handleAddDictionaryWord} className="feedback-form">
+            <input 
+              type="text" 
+              placeholder="English word (e.g. nenu)" 
+              value={feedbackEnglish} 
+              onChange={e => setFeedbackEnglish(e.target.value)} 
+              required 
+            />
+            <input 
+              type="text" 
+              placeholder="Native spelling (e.g. నేను)" 
+              value={feedbackNative} 
+              onChange={e => setFeedbackNative(e.target.value)} 
+              required 
+            />
+            <button type="submit">Add to Dictionary</button>
+          </form>
+          {feedbackMessage && <div className="feedback-message">{feedbackMessage}</div>}
         </div>
 
         {result && (

@@ -17,7 +17,21 @@ export class TransliterationEngine {
   private ruleMap: Map<string, PhoneticRule[]>;
 
   constructor(language: SupportedLanguage) {
-    this.config = getLanguageConfig(language);
+    // Clone config and dictionary so we don't mutate the global shared objects
+    this.config = { ...getLanguageConfig(language) };
+    this.config.dictionary = { ...this.config.dictionary };
+    
+    // Load user's personal dictionary
+    if (typeof window !== 'undefined' && window.localStorage) {
+      try {
+        const langKey = `xinglish_dict_${language}`;
+        const userDict = JSON.parse(window.localStorage.getItem(langKey) || '{}');
+        this.config.dictionary = { ...this.config.dictionary, ...userDict };
+      } catch (e) {
+        console.warn('Failed to load user dictionary', e);
+      }
+    }
+
     this.rules = this.config.rules;
     this.ruleMap = this.buildRuleMap();
   }
@@ -297,8 +311,41 @@ export class TransliterationEngine {
    * Update the language configuration
    */
   setLanguage(language: SupportedLanguage): void {
-    this.config = getLanguageConfig(language);
+    this.config = { ...getLanguageConfig(language) };
+    this.config.dictionary = { ...this.config.dictionary };
+    
+    if (typeof window !== 'undefined' && window.localStorage) {
+      try {
+        const langKey = `xinglish_dict_${language}`;
+        const userDict = JSON.parse(window.localStorage.getItem(langKey) || '{}');
+        this.config.dictionary = { ...this.config.dictionary, ...userDict };
+      } catch (e) {}
+    }
+
     this.rules = this.config.rules;
     this.ruleMap = this.buildRuleMap();
+  }
+
+  /**
+   * Add a custom word to the dictionary and persist to localStorage
+   */
+  addDictionaryWord(englishWord: string, nativeWord: string): void {
+    const lowerWord = englishWord.toLowerCase().trim();
+    const cleanNative = nativeWord.trim();
+    if (!lowerWord || !cleanNative) return;
+    
+    this.config.dictionary[lowerWord] = cleanNative;
+
+    // Persist to local storage
+    if (typeof window !== 'undefined' && window.localStorage) {
+      try {
+        const langKey = `xinglish_dict_${this.config.name.toLowerCase()}`;
+        const userDict = JSON.parse(window.localStorage.getItem(langKey) || '{}');
+        userDict[lowerWord] = cleanNative;
+        window.localStorage.setItem(langKey, JSON.stringify(userDict));
+      } catch (e) {
+        console.error('Failed to save to local dictionary', e);
+      }
+    }
   }
 }

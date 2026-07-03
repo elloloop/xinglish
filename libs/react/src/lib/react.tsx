@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import {
   EditorConfig,
   SupportedLanguage,
@@ -19,10 +19,16 @@ export interface TransliterationEditorProps extends Omit<EditorConfig, 'onChange
   style?: React.CSSProperties;
 }
 
+export interface TransliterationEditorRef {
+  addDictionaryWord: (english: string, native: string) => void;
+  getText: () => string;
+  setText: (text: string) => void;
+}
+
 /**
  * React component for transliteration editor
  */
-export function TransliterationEditorComponent({
+export const TransliterationEditorComponent = forwardRef<TransliterationEditorRef, TransliterationEditorProps>(({
   language,
   layout,
   showSuggestions = false,
@@ -32,10 +38,24 @@ export function TransliterationEditorComponent({
   disabled = false,
   className,
   style,
-}: TransliterationEditorProps) {
+}, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<TransliterationEditor | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
+
+  useImperativeHandle(ref, () => ({
+    addDictionaryWord: (english: string, native: string) => {
+      if (editorRef.current) {
+        editorRef.current.addDictionaryWord(english, native);
+      }
+    },
+    getText: () => editorRef.current?.getText() || '',
+    setText: (text: string) => {
+      if (editorRef.current) {
+        editorRef.current.setText(text);
+      }
+    }
+  }));
 
   // Initialize editor
   useEffect(() => {
@@ -105,7 +125,7 @@ export function TransliterationEditorComponent({
       data-testid="xinglish-react-editor"
     />
   );
-}
+});
 
 /**
  * Hook for using transliteration functionality
