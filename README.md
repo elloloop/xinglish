@@ -8,6 +8,14 @@ Phonetic transliteration toolkit for Indian languages
 [![npm version](https://img.shields.io/npm/v/@elloloop/xinglish-react?label=react)](https://www.npmjs.com/package/@elloloop/xinglish-react)
 [![npm version](https://img.shields.io/npm/v/@elloloop/xinglish-angular?label=angular)](https://www.npmjs.com/package/@elloloop/xinglish-angular)
 
+## 📖 The Xinglish Convention
+
+Xinglish is more than a typing engine: **[SPEC.md](SPEC.md)** defines a
+standard convention for writing Indian languages in English script — the
+spelling people already use in chats and search, made consistent across
+languages. Two profiles: what readers **see** (no diacritics, no case tricks)
+and what keyboards **accept** (this engine's lossless input rules).
+
 ## 🚀 Quick Start
 
 ### Installation
